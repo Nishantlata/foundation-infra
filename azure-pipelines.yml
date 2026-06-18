@@ -52,6 +52,6 @@ stages:
               inputs:
                 provider: 'azurerm'
                 command: 'plan'
-                workingDirectory: 'C:\agent\vsts-agent-win-x64-4.274.1\_work\1\s\Terraform'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/Terraform'
                 commandOptions: '-var-file="environment/dev/terraform.tfvars"'
                 environmentServiceNameAzureRM: 'Aexion service connection'
