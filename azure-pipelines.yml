@@ -30,3 +30,17 @@ stages:
                 backendAzureRmStorageAccountName: 'axionstgbackend'
                 backendAzureRmContainerName: 'axioncontainer'
                 backendAzureRmKey: 'prod.tfstate'
+
+  - stage: TerraformPlan
+    displayName: Plan
+
+
+    jobs:
+      - job: TerraformplanUse
+        steps: 
+            - task: TerraformTask@5
+              inputs:
+                provider: 'azurerm'
+                command: 'plan'
+                commandOptions: '-var-file="environment/dev/terraform.tfvars"'
+                environmentServiceNameAzureRM: 'Aexion service connection'
