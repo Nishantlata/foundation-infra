@@ -1,0 +1,19 @@
+trigger:
+  - none
+
+pool: Aexion pool
+
+stages:
+  - stage: Terraform Tool
+    displayName: TerraformInstall
+
+    jobs: 
+       - job: TerraformToolInstall
+         steps:
+           - task: TerraformInstaller@1
+             inputs:
+               terraformVersion: 'latest'
+       
+        
+
+        
