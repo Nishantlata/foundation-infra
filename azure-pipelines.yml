@@ -4,7 +4,7 @@ trigger:
 pool: Aexion pool
 
 stages:
-  - stage: Terraform Tool
+  - stage: TerraformToolInstallation
     displayName: TerraformInstall
 
     jobs: 
