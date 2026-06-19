@@ -26,7 +26,7 @@ stages:
               inputs:
                 provider: 'azurerm'
                 command: 'init'
-                workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform\Terraform'
+                workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform'
                 backendServiceArm: 'Aexion service connection'
                 backendAzureRmResourceGroupName: 'axion-secret'
                 backendAzureRmStorageAccountName: 'axionstgbackend'
@@ -45,7 +45,7 @@ stages:
               inputs:
                 provider: 'azurerm'
                 command: 'init'
-                workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform\Terraform'
+                workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform'
                 backendServiceArm: 'Aexion service connection'
                 backendAzureRmResourceGroupName: 'axion-secret'
                 backendAzureRmStorageAccountName: 'axionstgbackend'
@@ -56,6 +56,6 @@ stages:
               inputs:
                 provider: 'azurerm'
                 command: 'plan'
-                workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform\Terraform'
-                commandOptions: '-var-file="environment/dev/terraform.tfvars"'
+                workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform'
+                commandOptions: '-var-file="$(System.DefaultWorkingDirectory)\Terraform\environment\dev\terraform.tfvars"'
                 environmentServiceNameAzureRM: 'Aexion service connection'
