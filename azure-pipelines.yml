@@ -26,30 +26,13 @@ stages:
               inputs:
                 provider: 'azurerm'
                 command: 'init'
-                workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform'
+                workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform\Terraform'
                 backendServiceArm: 'Aexion service connection'
                 backendAzureRmResourceGroupName: 'axion-secret'
                 backendAzureRmStorageAccountName: 'axionstgbackend'
                 backendAzureRmContainerName: 'axioncontainer'
                 backendAzureRmKey: 'prod.tfstate'
 
-
-            - task: AzurePowerShell@5
-              inputs:
-                ScriptType: 'InlineScript'
-                Inline: |
-                  - powershell: |
-                      Write-Host "PWD:"
-                      Get-Location
-                  
-                      Write-Host "Source Directory:"
-                      Write-Host "$(Build.SourcesDirectory)"
-                  
-                      Write-Host "Default Working Directory:"
-                      Write-Host "$(System.DefaultWorkingDirectory)"
-                  
-                      Get-ChildItem $(Build.SourcesDirectory) -Recurse
-                    displayName: Debug Path
 
   - stage: TerraformPlan
     displayName: Plan
@@ -62,7 +45,7 @@ stages:
               inputs:
                 provider: 'azurerm'
                 command: 'init'
-                workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform'
+                workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform\Terraform'
                 backendServiceArm: 'Aexion service connection'
                 backendAzureRmResourceGroupName: 'axion-secret'
                 backendAzureRmStorageAccountName: 'axionstgbackend'
@@ -73,6 +56,6 @@ stages:
               inputs:
                 provider: 'azurerm'
                 command: 'plan'
-                workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform'
+                workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform\Terraform'
                 commandOptions: '-var-file="environment/dev/terraform.tfvars"'
                 environmentServiceNameAzureRM: 'Aexion service connection'
