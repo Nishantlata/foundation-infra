@@ -16,6 +16,7 @@ stages:
        
   - stage: TerraformInit
     displayName: Init
+  
 
 
     jobs:
@@ -31,6 +32,24 @@ stages:
                 backendAzureRmStorageAccountName: 'axionstgbackend'
                 backendAzureRmContainerName: 'axioncontainer'
                 backendAzureRmKey: 'prod.tfstate'
+
+
+            - task: AzurePowerShell@5
+              inputs:
+                ScriptType: 'InlineScript'
+                Inline: |
+                  - powershell: |
+                      Write-Host "PWD:"
+                      Get-Location
+                  
+                      Write-Host "Source Directory:"
+                      Write-Host "$(Build.SourcesDirectory)"
+                  
+                      Write-Host "Default Working Directory:"
+                      Write-Host "$(System.DefaultWorkingDirectory)"
+                  
+                      Get-ChildItem $(Build.SourcesDirectory) -Recurse
+                    displayName: Debug Path
 
   - stage: TerraformPlan
     displayName: Plan
