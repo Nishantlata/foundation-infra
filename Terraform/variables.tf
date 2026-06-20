@@ -40,3 +40,20 @@ variable "subnet_name" {
 
   }))
 }
+
+variable "pip_name" {
+
+  description = "The name of the Public IP address."
+
+  type = map(object({
+
+    pip_name = string
+
+    rg_name = string
+
+    pip_location = string
+
+    pip_allocation_method = string
+
+  }))
+}

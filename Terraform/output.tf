@@ -22,3 +22,13 @@ output "subnet_id" {
   description = "ID of the subnet"
   value       = [for subnet in module.subnet : subnet.subnet_id]
 }
+
+output "public_ip_ids" {
+  description = "IDs of the public IPs created by the module"
+  value       = [for pip in module.pip : pip.public_ip_id]
+}
+
+output "public_ip_addresses" {
+  description = "IP addresses of the public IPs created by the module"
+  value       = [for pip in module.pip : pip.public_ip_address]
+}

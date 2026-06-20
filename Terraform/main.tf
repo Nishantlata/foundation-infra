@@ -35,3 +35,17 @@ module "subnet" {
   vnet_name        = each.value.vnet_name
   address_prefixes = each.value.address_prefixes
 }
+
+module "pip" {
+  source = "./modules/pip"
+
+  for_each = var.pip_name
+
+  depends_on = [module.resource_group]
+
+  pip_name              = each.value.pip_name
+  rg_name               = each.value.rg_name
+  pip_location          = each.value.pip_location
+  pip_allocation_method = each.value.pip_allocation_method
+  comman_tags           = local.comman_tags
+}
