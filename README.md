@@ -216,43 +216,6 @@ The release lifecycle advances securely across three environments:
 
 ```
 
----
-
-## 📁 Repository Structure
-
-```text
-FOUNDATION-INFRA/
-├── Terraform/
-│   ├── environment/                 # Environment Specific Variables
-│   │   ├── dev/terraform.tfvars     # Dev specifications
-│   │   ├── qa/terraform.tfvars      # QA specifications
-│   │   └── prod/terraform.tfvars    # Production specifications
-│   ├── modules/                     # Reusable Infrastructure Blocks
-│   │   ├── resource_group/          # Resource group setup
-│   │   ├── nsg/                     # Network Security Group definitions
-│   │   ├── nsg_association/         # Attaching NSGs to subnets
-│   │   ├── vnet/                    # Core Virtual Network module
-│   │   ├── subnet/                  # Network partitioning
-│   │   ├── pip/                     # Inbound Public IP definitions
-│   │   ├── key_vault/               # Secret management engine
-│   │   ├── app_service_plan/        # Compute infrastructure provisioning
-│   │   ├── app_service/             # Azure App Service deployment target
-│   │   └── monitoring/              # Log Analytics & Application Insights
-│   ├── main.tf                      # Root orchestration module
-│   ├── backend.tf                   # Remote state configuration storage
-│   ├── provider.tf                  # AzureRM provider declarations
-│   └── versions.tf                  # Version pins for providers & CLI
-├── .azure-pipelines/                # Pipeline Engine Definitions
-│   ├── azure-pipelines-ci.yml       # Standard CI build pipeline
-│   └── azure-pipelines-cd.yml       # Multi-stage release governance pipeline
-├── src/                             # Core Application Source Code
-├── .gitignore                       # Git exclusion rules
-└── README.md                        # Documentation blueprint
-
-```
-
----
-
 ## ⚙️ Quick Start Local Strategy
 
 ### 🛠️ Prerequisites
