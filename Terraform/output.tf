@@ -32,3 +32,13 @@ output "public_ip_addresses" {
   description = "IP addresses of the public IPs created by the module"
   value       = [for pip in module.pip : pip.public_ip_address]
 }
+
+output "nsg_association_ids" {
+  description = "IDs of the NSG associations created by the module"
+  value       = { for k, v in module.nsg_association : k => v.nsg_association_id }
+}
+
+output "app_service_plan_ids" {
+  value = [ for app_service_plan in module.app_service_plan : app_service_plan.app_service_plan_id ]
+  description = "IDs of the App Service Plans created by the module"
+}

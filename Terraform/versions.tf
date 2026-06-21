@@ -1,3 +1,3 @@
-terraform{
-    required_version = "v1.15.6"
+terraform {
+  required_version = "v1.15.6"
 }

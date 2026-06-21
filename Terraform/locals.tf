@@ -1,5 +1,5 @@
 locals {
-  location = "East US"
+  location = "South India"
   comman_tags = {
     environment = "dev"
     owner       = "axion"
