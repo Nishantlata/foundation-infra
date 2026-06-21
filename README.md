@@ -1,4 +1,3 @@
-# Design and implement a fully automated CI/CD platform that provisions Azure infrastructure using Terraform and deploys applications to Azure App Service through Azure DevOps pipelines. The solution enables Infrastructure as Code (IaC), automated application deployment, validation testing, monitoring, and release governance across multiple environments (Dev, QA, Prod).
 
 # 🚀 Automated Azure Enterprise Landing Zone & CI/CD Platform
 
@@ -7,7 +6,7 @@
 [![Azure DevOps](https://img.shields.io/badge/CI%2FCD-Azure_DevOps-0078D7?logo=azuredevops&logoColor=white)](#)
 [![Environments](https://img.shields.io/badge/Environments-Dev_|_QA_|_Prod-brightgreen)](#)
 
-An enterprise-grade, fully automated deployment platform that provisions secure cloud infrastructure using **Terraform (Infrastructure as Code)** and orchestrates application lifecycles via **Azure DevOps Multi-Stage Pipelines**.
+An enterprise-grade, fully automated deployment platform that provisions secure cloud infrastructure using **Terraform (Infrastructure as Code)** and orchestrates application lifecycles via **Azure DevOps Multi-Stage Pipelines**. # Design and implement a fully automated CI/CD platform that provisions Azure infrastructure using Terraform and deploys applications to Azure App Service through Azure DevOps pipelines. The solution enables Infrastructure as Code (IaC), automated application deployment, validation testing, monitoring, and release governance across multiple environments (Dev, QA, Prod).
 
 ---
 
