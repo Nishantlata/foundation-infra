@@ -36,3 +36,21 @@ stages:
         - task: TerraformInstaller@1
           inputs:
            terraformVersion: 'latest'
+
+  - stage: Azure_Login
+    displayName: "Azure Login"
+    jobs:
+      - job: Cloud_Login
+        steps:
+        - task: AzureCLI@3
+          inputs:
+            connectionType: 'azureRM'
+            azureSubscription: 'Aexion service connection'
+            scriptType: 'ps'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
+              Write-Host "Setting Subscription..."
+              az account set --subscription "$(subscriptionId)"
+              
+              Write-Host "Current Subscription:"
+              az account show --output table
