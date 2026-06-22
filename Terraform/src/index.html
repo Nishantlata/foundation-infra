@@ -1,243 +1,410 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AEXION Engine | Azure Live</title>
-    
-    <style>
-        :root {
-            --bg-color: #060b16;
-            --card-bg: rgba(255, 255, 255, 0.02);
-            --border-color: rgba(0, 242, 254, 0.15);
-            --primary-glow: #0078d4;
-            --secondary-glow: #00f2fe;
-            --text-color: #f5f7fa;
-        }
-
-        body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            background-image: 
-                radial-gradient(circle at 15% 15%, rgba(0, 120, 212, 0.2) 0%, transparent 45%),
-                radial-gradient(circle at 85% 85%, rgba(0, 242, 254, 0.15) 0%, transparent 45%);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            color: var(--text-color);
-            overflow: hidden;
-            transition: background-image 0.2s ease;
-        }
-
-        /* Glassmorphism Card Element */
-        .card {
-            background: var(--card-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid var(--border-color);
-            padding: 3.5rem 3rem;
-            border-radius: 24px;
-            box-shadow: 0 25px 60px rgba(0, 242, 254, 0.05), inset 0 0 20px rgba(255, 255, 255, 0.02);
-            text-align: center;
-            max-width: 550px;
-            width: 85%;
-            position: relative;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        /* Neon Live Indicator Badge */
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(0, 242, 254, 0.08);
-            border: 1px solid rgba(0, 242, 254, 0.3);
-            color: #00f2fe;
-            padding: 6px 18px;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 700;
-            margin-bottom: 2rem;
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.15);
-        }
-
-        .pulse-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #00f2fe;
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
-        }
-
-        /* Brand Name Styling */
-        .brand-title {
-            font-size: 3.5rem;
-            margin: 0;
-            font-weight: 900;
-            letter-spacing: 4px;
-            background: linear-gradient(135deg, #ffffff 30%, #00f2fe 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(0, 242, 254, 0.2);
-        }
-
-        h2 {
-            font-size: 1.4rem;
-            margin: 0.5rem 0 1.5rem 0;
-            font-weight: 400;
-            color: #94a3b8;
-            letter-spacing: 1px;
-        }
-
-        p {
-            color: #64748b;
-            font-size: 1.05rem;
-            line-height: 1.7;
-            margin-bottom: 2rem;
-        }
-
-        /* Live Uptime Timer */
-        .uptime-container {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.95rem;
-            color: #00f2fe;
-            margin-bottom: 2.5rem;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 10px 20px;
-            border-radius: 8px;
-            display: inline-block;
-            border: 1px solid rgba(0, 242, 254, 0.15);
-            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-
-        /* Cyberpunk Styled Glow Button */
-        .btn {
-            display: inline-block;
-            background: linear-gradient(135deg, var(--primary-glow), var(--secondary-glow));
-            color: #060b16;
-            font-weight: 800;
-            text-decoration: none;
-            padding: 14px 36px;
-            border-radius: 12px;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 25px rgba(0, 242, 254, 0.3);
-            border: none;
-            outline: none;
-            cursor: pointer;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 35px rgba(0, 242, 254, 0.6);
-            color: #fff;
-        }
-
-        .footer {
-            margin-top: 3.5rem;
-            font-size: 0.75rem;
-            color: #475569;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        /* Animations */
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-12px); }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 242, 254, 0.6); }
-            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(0, 242, 254, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 242, 254, 0); }
-        }
-    </style>
+    <title>Axion Academy | Premium Coaching Center</title>
+    <!-- Google Fonts & FontAwesome for Premium Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="card">
-        <div class="status-badge">
-            <span class="pulse-dot"></span> Core Engine Active
+    <!-- Premium Navbar -->
+    <header>
+        <div class="navbar container">
+            <div class="logo">
+                <i class="fa-solid fa-graduation-cap-slash accent-icon"></i>Axion<span>Academy</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#courses">Our Courses</a></li>
+                <li><a href="#faculty">Expert Mentors</a></li>
+                <li><a href="#testimonials">Reviews</a></li>
+                <li><a href="#admission" class="nav-btn">Apply Online <i class="fa-solid fa-arrow-right-long"></i></a></li>
+            </ul>
+            <div class="menu-toggle"><i class="fa-solid fa-bars"></i></div>
         </div>
-        
-        <h1 class="brand-title">AEXION</h1>
-        <h2>Cloud Environment Online</h2>
-        
-        <p>Aexion application Azure App Service par successfully deploy ho chuki hai. Sabhi microservices aur system architectures smoothly respond kar rahe hain.</p>
-        
-        <div class="uptime-container">
-            AEXION Uptime: <span id="uptime-counter">00m 00s</span>
-        </div>
-        
-        <button id="launch-btn" class="btn">Launch Aexion</button>
-        
-        <div class="footer">
-            Powered by Azure Cloud Architecture
-        </div>
-    </div>
+    </header>
 
+    <!-- Ultra-Modern Hero Banner -->
+    <section id="home" class="hero">
+        <div class="container hero-grid">
+            <div class="hero-content">
+                <span class="badge"><i class="fa-solid fa-star"></i> India's Most Trusted Learning Platform</span>
+                <h1>Shape Your Destiny With <span>Axion</span></h1>
+                <p>Top-tier immersive programs designed meticulously for JEE, NEET, Foundation tracks, and UPSC exams. Experience the edge of smart analytics and elite mentorship.</p>
+                <div class="hero-btns">
+                    <a href="#courses" class="btn btn-primary">Explore Courses <i class="fa-solid fa-book-open"></i></a>
+                    <a href="#admission" class="btn btn-secondary">Book Free Demo <i class="fa-solid fa-calendar-check"></i></a>
+                </div>
+                <div class="hero-trust">
+                    <div class="trust-avatars">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80" alt="Student">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Student">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" alt="Student">
+                    </div>
+                    <p>Trusted by over <strong>18,000+</strong> students across India.</p>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="main-image-container">
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80" alt="Axion Classroom Study" class="hero-img">
+                    <div class="floating-card stat-card-float">
+                        <i class="fa-solid fa-trophy highlight-icon"></i>
+                        <div>
+                            <h4>AIR 1 achieved</h4>
+                            <p>2 consecutive years</p>
+                        </div>
+                    </div>
+                    <div class="floating-card support-card-float">
+                        <i class="fa-solid fa-circle-check dynamic-icon"></i>
+                        <div>
+                            <h4>24/7 Doubt Desk</h4>
+                            <p>Instant solutions</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Banner Element -->
+    <section class="stats-counter-bar">
+        <div class="container stats-inner-grid">
+            <div class="stat-box">
+                <h3>18K+</h3>
+                <p>Active Enrollments</p>
+            </div>
+            <div class="stat-box">
+                <h3>99.2%</h3>
+                <p>Our Success Rate</p>
+            </div>
+            <div class="stat-box">
+                <h3>85+</h3>
+                <p>Premium Centers</p>
+            </div>
+            <div class="stat-box">
+                <h3>150+</h3>
+                <p>IITian Mentors</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Feature Section -->
+    <section id="about" class="about-features container section-space">
+        <div class="section-title text-center">
+            <span class="sub-heading">Why Axion Stands Out</span>
+            <h2>We Don't Just Teach. We Transform.</h2>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="icon-wrap color-1"><i class="fa-solid fa-laptop-code"></i></div>
+                <h3>Hybrid Classrooms</h3>
+                <p>Enjoy offline focus with seamless access to high-definition online cloud recordings and smart materials.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon-wrap color-2"><i class="fa-solid fa-square-poll-vertical"></i></div>
+                <h3>AI Powered Analytics</h3>
+                <p>Track micro-weaknesses instantly with automated regular tracking algorithms after every test module.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon-wrap color-3"><i class="fa-solid fa-user-tie"></i></div>
+                <h3>Elite Personal Mentoring</h3>
+                <p>Get guided 1-on-1 strategic scheduling check-ins directly from top subject matter domain experts weekly.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Top-Grade Course Buttons & Catalog -->
+    <section id="courses" class="courses-catalog section-space style-bg">
+        <div class="container">
+            <div class="section-title text-center">
+                <span class="sub-heading">Choose Your Goal</span>
+                <h2>Explore Professional Flagship Programs</h2>
+                <p class="section-desc">Filter programs by categories instantly to jumpstart your career track journey.</p>
+            </div>
+
+            <!-- Course Control Buttons -->
+            <div class="course-tabs-wrapper">
+                <button class="tab-btn active" onclick="filterCourses('all')">All Courses</button>
+                <button class="tab-btn" onclick="filterCourses('engineering')">Engineering (JEE)</button>
+                <button class="tab-btn" onclick="filterCourses('medical')">Medical (NEET)</button>
+                <button class="tab-btn" onclick="filterCourses('foundation')">Foundation (8th-10th)</button>
+                <button class="tab-btn" onclick="filterCourses('civil')">UPSC Tracks</button>
+            </div>
+
+            <!-- Program Course Grid Elements -->
+            <div class="courses-display-grid">
+                <!-- Course Card 1 -->
+                <div class="course-master-card" data-category="engineering">
+                    <div class="card-thumb" style="background-image: url('https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&w=600&q=80')">
+                        <span class="category-tag">JEE Premium</span>
+                    </div>
+                    <div class="card-inner-body">
+                        <h3>Axion IIT-JEE Prime (Mains + Adv)</h3>
+                        <p>Intensive algorithmic problem layouts, absolute doubt resolutions desk, and advanced periodic analytics maps.</p>
+                        <div class="card-meta">
+                            <span><i class="fa-regular fa-clock"></i> 2-Yr Program</span>
+                            <span><i class="fa-regular fa-star"></i> 4.9 (4.2k ratings)</span>
+                        </div>
+                    </div>
+                    <div class="card-action-bar">
+                        <span class="price-info">Batches Open</span>
+                        <a href="#admission" class="action-link">Enroll Now <i class="fa-solid fa-arrow-trend-up"></i></a>
+                    </div>
+                </div>
+
+                <!-- Course Card 2 -->
+                <div class="course-master-card" data-category="medical">
+                    <div class="card-thumb" style="background-image: url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=600&q=80')">
+                        <span class="category-tag">NEET Special</span>
+                    </div>
+                    <div class="card-inner-body">
+                        <h3>Axion NEET Supreme Medical</h3>
+                        <p>Detailed NCERT edge parsing, real-time diagram practice, high-speed biology drill, and mock evaluation patterns.</p>
+                        <div class="card-meta">
+                            <span><i class="fa-regular fa-clock"></i> 1-Yr Program</span>
+                            <span><i class="fa-regular fa-star"></i> 5.0 (3.8k ratings)</span>
+                        </div>
+                    </div>
+                    <div class="card-action-bar">
+                        <span class="price-info">Scholarships Open</span>
+                        <a href="#admission" class="action-link">Enroll Now <i class="fa-solid fa-arrow-trend-up"></i></a>
+                    </div>
+                </div>
+
+                <!-- Course Card 3 -->
+                <div class="course-master-card" data-category="foundation">
+                    <div class="card-thumb" style="background-image: url('https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=600&q=80')">
+                        <span class="category-tag">Foundation</span>
+                    </div>
+                    <div class="card-inner-body">
+                        <h3>Axion Olympiad Gen-Next Alpha</h3>
+                        <p>Strengthening logic maps, mental aptitude building, advanced science benchmarks for NTSE & Olympiad wins.</p>
+                        <div class="card-meta">
+                            <span><i class="fa-regular fa-clock"></i> 1-Yr Program</span>
+                            <span><i class="fa-regular fa-star"></i> 4.8 (1.9k ratings)</span>
+                        </div>
+                    </div>
+                    <div class="card-action-bar">
+                        <span class="price-info">Batches Open</span>
+                        <a href="#admission" class="action-link">Enroll Now <i class="fa-solid fa-arrow-trend-up"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Faculty Segment -->
+    <section id="faculty" class="faculty-segment container section-space">
+        <div class="section-title text-center">
+            <span class="sub-heading">Learn from the Best</span>
+            <h2>The Brains Behind Your Success</h2>
+            <p class="section-desc">Real experts who have mastered the exams themselves over years.</p>
+        </div>
+        <div class="faculty-grid">
+            <div class="faculty-card">
+                <div class="fac-avatar-mask">
+                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80" alt="Faculty">
+                </div>
+                <h4>Dr. Shweta Rastogi</h4>
+                <p class="fac-desg">Head of Inorganic Chemistry</p>
+                <span class="fac-tag">Ex-IIT Delhi Professor</span>
+            </div>
+            <div class="faculty-card">
+                <div class="fac-avatar-mask">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80" alt="Faculty">
+                </div>
+                <h4>Prof. Alok Tripathi</h4>
+                <p class="fac-desg">Senior Physics Architect</p>
+                <span class="fac-tag">AIR 148 Holder (JEE)</span>
+            </div>
+            <div class="faculty-card">
+                <div class="fac-avatar-mask">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80" alt="Faculty">
+                </div>
+                <h4>Meera Vasudevan</h4>
+                <p class="fac-desg">Advanced Calculus Coach</p>
+                <span class="fac-tag">15+ Yrs Academic Exp</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Premium Testimonial Section -->
+    <section id="testimonials" class="testimonials-sec section-space style-bg">
+        <div class="container">
+            <div class="section-title text-center">
+                <span class="sub-heading">Hall of Fame</span>
+                <h2>Words From Our Top Achievers</h2>
+            </div>
+            <div class="testimonials-grid">
+                <div class="review-card">
+                    <div class="stars-wrap"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p>"Axion Academy's test analysis tools completely redirected my physics strategies. The modular performance map showed exactly where my negative marking happened."</p>
+                    <div class="reviewer-meta">
+                        <strong>Rohan Singhal</strong>
+                        <span>IIT Bombay (AIR 34)</span>
+                    </div>
+                </div>
+                <div class="review-card">
+                    <div class="stars-wrap"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+                    <p>"The teachers never lose patience. Doubt help counters are active even till 11 PM. Best decision for my medical path preparation phase."</p>
+                    <div class="reviewer-meta">
+                        <strong>Kriti Deshmukh</strong>
+                        <span>AIIMS New Delhi (Score 710)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admission Intake Form Form Section -->
+    <section id="admission" class="admission-portal container section-space">
+        <div class="portal-grid">
+            <div class="portal-info">
+                <span class="badge-accent">Intake Session 2026-27</span>
+                <h2>Accelerate Your Ambitions. Book A Demo Slot Today!</h2>
+                <p>Register online to unlock an immediate up to <strong>45% Scholarship</strong> based on your diagnostic assessment evaluation results.</p>
+                <ul class="benefit-checklist">
+                    <li><i class="fa-solid fa-circle-check text-green"></i> 3 Complimentary Demo Sessions</li>
+                    <li><i class="fa-solid fa-circle-check text-green"></i> Personal Printed Mock Booklet Kit</li>
+                    <li><i class="fa-solid fa-circle-check text-green"></i> Direct interaction with domain advisors</li>
+                </ul>
+                <div class="support-dial">
+                    <div class="call-icon"><i class="fa-solid fa-phone-volume"></i></div>
+                    <div>
+                        <p>Have an urgent query? Speak to a counselor</p>
+                        <a href="tel:1800200900" class="phone-link">+1800 200 900 (Toll Free)</a>
+                    </div>
+                </div>
+            </div>
+            <div class="portal-form-wrapper">
+                <h3>Request a Callback</h3>
+                <p>Fill out correct particulars to secure your premium demo desk token.</p>
+                <form class="premium-form" onsubmit="event.preventDefault(); alert('Success! Your exclusive batch allocation request code has been sent over SMS.');">
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label>Full Student Name</label>
+                            <input type="text" placeholder="e.g. Priyanshu Sharma" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label>Mobile Number</label>
+                            <input type="tel" placeholder="Enter 10 digit number" pattern="[0-9]{10}" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label>Target Academic Stream</label>
+                            <select required>
+                                <option value="">-- Choose Stream Goal --</option>
+                                <option value="jee">IIT-JEE Prep (Mains & Advanced)</option>
+                                <option value="neet">NEET Target Track (Medical Entrance)</option>
+                                <option value="foundation">Early Foundation Grade (8-10)</option>
+                                <option value="upsc">Civil Services / Competitive Edge</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="submit-btn-premium">Submit & Get Access Passes <i class="fa-solid fa-circle-chevron-right"></i></button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Professional Aesthetic Footer Grid -->
+    <footer>
+        <div class="container footer-top-grid">
+            <div class="footer-brand-col">
+                <div class="logo logo-light"><i class="fa-solid fa-graduation-cap-slash accent-icon"></i>Axion<span>Academy</span></div>
+                <p>Elevating learning architectures for high-tier professional goals with uncompromising focus and precision frameworks.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="#"><i class="fa-brands fa-x-twitter"></i></a>
+                </div>
+            </div>
+            <div class="footer-links-col">
+                <h4>Academic Wings</h4>
+                <ul>
+                    <li><a href="#courses">Engineering Stream</a></li>
+                    <li><a href="#courses">Medical Stream</a></li>
+                    <li><a href="#courses">Pre-Foundation Division</a></li>
+                    <li><a href="#admission">Scholarship Schemes</a></li>
+                </ul>
+            </div>
+            <div class="footer-links-col">
+                <h4>Quick Gateways</h4>
+                <ul>
+                    <li><a href="#about">About Our Core</a></li>
+                    <li><a href="#faculty">Meet Mentors</a></li>
+                    <li><a href="#testimonials">Success Wall</a></li>
+                    <li><a href="#admission">Admissions 2026</a></li>
+                </ul>
+            </div>
+            <div class="footer-links-col">
+                <h4>Head Office</h4>
+                <p class="address-text"><i class="fa-solid fa-location-dot"></i> Axion Premium Corporate Towers, Tech Zone-4, New Delhi, India.</p>
+                <p class="address-text"><i class="fa-solid fa-envelope"></i> helpdesk@axionacademy.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom text-center">
+            <p>&copy; 2026 Axion Academy Platform. Handcrafted for Ultra-Premium UI Standards.</p>
+        </div>
+    </footer>
+
+    <!-- Interactive Filter Script Function -->
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const launchBtn = document.getElementById("launch-btn");
-            const uptimeCounter = document.getElementById("uptime-counter");
+        function filterCourses(category) {
+            const tabs = document.querySelectorAll('.tab-btn');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
 
-            // 1. Live Uptime Counter
-            let totalSeconds = 0;
-            setInterval(() => {
-                totalSeconds++;
-                let minutes = Math.floor(totalSeconds / 60);
-                let seconds = totalSeconds % 60;
-
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
-
-                uptimeCounter.textContent = `${minutes}m ${seconds}s`;
-            }, 1000);
-
-            // 2. Interactive Button Click Effect
-            launchBtn.addEventListener("click", () => {
-                launchBtn.disabled = true;
-                launchBtn.style.background = "#1e293b";
-                launchBtn.style.color = "#64748b";
-                launchBtn.style.cursor = "not-allowed";
-                launchBtn.style.boxShadow = "none";
-                launchBtn.style.border = "1px solid rgba(255,255,255,0.05)";
-                launchBtn.textContent = "Booting Aexion Core...";
-
-                setTimeout(() => {
-                    launchBtn.style.background = "linear-gradient(135deg, #107c41, #22c55e)";
-                    launchBtn.style.color = "#fff";
-                    launchBtn.style.boxShadow = "0 4px 25px rgba(34, 197, 94, 0.4)";
-                    launchBtn.textContent = "✔ Core Connected";
-                    
-                    alert("🚀 AEXION Console Initialized! Server environment stable aur optimized hai.");
-                }, 2000);
+            const cards = document.querySelectorAll('.course-master-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
             });
-
-            // 3. Mouse Movement Glow Effect
-            document.body.addEventListener("mousemove", (e) => {
-                const x = (e.clientX / window.innerWidth) * 100;
-                const y = (e.clientY / window.innerHeight) * 100;
-                
-                document.body.style.backgroundImage = `
-                    radial-gradient(circle at ${x}% ${y}%, rgba(0, 120, 212, 0.2) 0%, transparent 45%),
-                    radial-gradient(circle at ${100 - x}% ${100 - y}%, rgba(0, 242, 254, 0.15) 0%, transparent 45%)
-                `;
-            });
-        });
+        }
     </script>
-</body>
-</html>
-<script src="script.js"></script>
+    <!-- HTML बटन (अगर पहले से है तो बस class="nav-btn" और id="myBtn" मैच कर लें) -->
+<button class="nav-btn" id="myBtn">सबमिट करें</button>
+
+<!-- यहाँ से आपकी JavaScript Script शुरू होती है -->
+<script>
+    // 1. बटन को HTML से सेलेक्ट करना
+    const button = document.getElementById('myBtn');
+
+    // 2. बटन पर क्लिक होने पर क्या होगा (Event Listener)
+    button.addEventListener('click', function() {
+        
+        // बटन का पुराना टेक्स्ट संभाल कर रखना
+        const originalText = this.innerHTML;
+        
+        // क्लिक करते ही बटन को "Loading..." मोड में डालना
+        this.innerHTML = 'लोडिंग हो रहा है...';
+        this.style.opacity = '0.7';
+        this.style.pointerEvents = 'none'; // ताकि दोबारा तुरंत क्लिक न हो सके
+
+        // 1.5 सेकंड का नकली डिले (जैसे सर्वर से डेटा आ रहा हो)
+        setTimeout(() => {
+            // मैसेज दिखाना
+            alert('🎉 बधाई हो! आपका बटन सही से काम कर रहा है और CSS एरर भी ठीक हो गया है!');
+            
+            // बटन को वापस नॉर्मल करना
+            this.innerHTML = originalText;
+            this.style.opacity = '1';
+            this.style.pointerEvents = 'auto';
+        }, 1500);
+        
+    });
+</script>
 </body>
 </html>
