@@ -38,7 +38,3 @@ output "nsg_association_ids" {
   value       = { for k, v in module.nsg_association : k => v.nsg_association_id }
 }
 
-output "app_service_plan_ids" {
-  value = [ for app_service_plan in module.app_service_plan : app_service_plan.app_service_plan_id ]
-  description = "IDs of the App Service Plans created by the module"
-}

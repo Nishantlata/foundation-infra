@@ -70,3 +70,11 @@ app_service_plans = {
     sku_name            = "B1"
   }
 }
+
+app_services = {
+  "app-service-axion" = {
+    app_service_name     = "app-web-dev-axion"
+    rg_name              = "rg-web-dev-axion"
+    app_service_plan_key = "asp-axion"  
+  }
+}

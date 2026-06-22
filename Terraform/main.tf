@@ -95,3 +95,16 @@ module "app_service_plan" {
   os_type             = each.value.os_type
   sku_name            = each.value.sku_name
 }
+
+module "app_service" {
+  source = "./modules/app_service"
+
+  for_each = var.app_services
+
+  depends_on = [module.app_service_plan]
+
+  app_service_name      = each.value.app_service_name
+  rg_location           = local.location
+  rg_name               = each.value.rg_name
+  app_service_plan_id = module.app_service_plan[each.value.app_service_plan_key].app_service_plan_id
+}
