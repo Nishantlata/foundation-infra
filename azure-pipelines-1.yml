@@ -27,3 +27,12 @@ parameters:
       - apply
 
 pool: Aexion pool
+
+stages:
+  - stage: Terraform_install
+    jobs:
+      - job: Terraform
+        steps:
+        - task: TerraformInstaller@1
+          inputs:
+           terraformVersion: 'latest'
