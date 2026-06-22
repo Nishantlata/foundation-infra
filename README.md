@@ -34,6 +34,14 @@ The architecture implements a secure enterprise landing zone, isolating services
  (Auto-Trigger)          (Automated Gates)    (Approval Governance)
 
 
+
+
+
+
+
+
+
+
  # 📁 Repository Structure
 
  FOUNDATION-INFRA/

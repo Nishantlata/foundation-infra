@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEXION Engine | Azure Live</title>
+    
+    <style>
+        :root {
+            --bg-color: #060b16;
+            --card-bg: rgba(255, 255, 255, 0.02);
+            --border-color: rgba(0, 242, 254, 0.15);
+            --primary-glow: #0078d4;
+            --secondary-glow: #00f2fe;
+            --text-color: #f5f7fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(0, 120, 212, 0.2) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(0, 242, 254, 0.15) 0%, transparent 45%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: var(--text-color);
+            overflow: hidden;
+            transition: background-image 0.2s ease;
+        }
+
+        /* Glassmorphism Card Element */
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--border-color);
+            padding: 3.5rem 3rem;
+            border-radius: 24px;
+            box-shadow: 0 25px 60px rgba(0, 242, 254, 0.05), inset 0 0 20px rgba(255, 255, 255, 0.02);
+            text-align: center;
+            max-width: 550px;
+            width: 85%;
+            position: relative;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Neon Live Indicator Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 242, 254, 0.08);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            color: #00f2fe;
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.15);
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #00f2fe;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Brand Name Styling */
+        .brand-title {
+            font-size: 3.5rem;
+            margin: 0;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, #ffffff 30%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 242, 254, 0.2);
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            margin: 0.5rem 0 1.5rem 0;
+            font-weight: 400;
+            color: #94a3b8;
+            letter-spacing: 1px;
+        }
+
+        p {
+            color: #64748b;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        /* Live Uptime Timer */
+        .uptime-container {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            color: #00f2fe;
+            margin-bottom: 2.5rem;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: inline-block;
+            border: 1px solid rgba(0, 242, 254, 0.15);
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Cyberpunk Styled Glow Button */
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary-glow), var(--secondary-glow));
+            color: #060b16;
+            font-weight: 800;
+            text-decoration: none;
+            padding: 14px 36px;
+            border-radius: 12px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 25px rgba(0, 242, 254, 0.3);
+            border: none;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 35px rgba(0, 242, 254, 0.6);
+            color: #fff;
+        }
+
+        .footer {
+            margin-top: 3.5rem;
+            font-size: 0.75rem;
+            color: #475569;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 242, 254, 0.6); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(0, 242, 254, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 242, 254, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="status-badge">
+            <span class="pulse-dot"></span> Core Engine Active
+        </div>
+        
+        <h1 class="brand-title">AEXION</h1>
+        <h2>Cloud Environment Online</h2>
+        
+        <p>Aexion application Azure App Service par successfully deploy ho chuki hai. Sabhi microservices aur system architectures smoothly respond kar rahe hain.</p>
+        
+        <div class="uptime-container">
+            AEXION Uptime: <span id="uptime-counter">00m 00s</span>
+        </div>
+        
+        <button id="launch-btn" class="btn">Launch Aexion</button>
+        
+        <div class="footer">
+            Powered by Azure Cloud Architecture
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const launchBtn = document.getElementById("launch-btn");
+            const uptimeCounter = document.getElementById("uptime-counter");
+
+            // 1. Live Uptime Counter
+            let totalSeconds = 0;
+            setInterval(() => {
+                totalSeconds++;
+                let minutes = Math.floor(totalSeconds / 60);
+                let seconds = totalSeconds % 60;
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                uptimeCounter.textContent = `${minutes}m ${seconds}s`;
+            }, 1000);
+
+            // 2. Interactive Button Click Effect
+            launchBtn.addEventListener("click", () => {
+                launchBtn.disabled = true;
+                launchBtn.style.background = "#1e293b";
+                launchBtn.style.color = "#64748b";
+                launchBtn.style.cursor = "not-allowed";
+                launchBtn.style.boxShadow = "none";
+                launchBtn.style.border = "1px solid rgba(255,255,255,0.05)";
+                launchBtn.textContent = "Booting Aexion Core...";
+
+                setTimeout(() => {
+                    launchBtn.style.background = "linear-gradient(135deg, #107c41, #22c55e)";
+                    launchBtn.style.color = "#fff";
+                    launchBtn.style.boxShadow = "0 4px 25px rgba(34, 197, 94, 0.4)";
+                    launchBtn.textContent = "✔ Core Connected";
+                    
+                    alert("🚀 AEXION Console Initialized! Server environment stable aur optimized hai.");
+                }, 2000);
+            });
+
+            // 3. Mouse Movement Glow Effect
+            document.body.addEventListener("mousemove", (e) => {
+                const x = (e.clientX / window.innerWidth) * 100;
+                const y = (e.clientY / window.innerHeight) * 100;
+                
+                document.body.style.backgroundImage = `
+                    radial-gradient(circle at ${x}% ${y}%, rgba(0, 120, 212, 0.2) 0%, transparent 45%),
+                    radial-gradient(circle at ${100 - x}% ${100 - y}%, rgba(0, 242, 254, 0.15) 0%, transparent 45%)
+                `;
+            });
+        });
+    </script>
+</body>
+</html>
+<script src="script.js"></script>
+</body>
+</html>
