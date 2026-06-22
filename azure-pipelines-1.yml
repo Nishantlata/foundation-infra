@@ -1,0 +1,29 @@
+trigger:
+  branches:
+      include:
+        - main
+
+pr:
+  branches:
+      include:
+        - feature/sprint-1-feature
+
+parameters:
+  - name: environment
+    displayName: Choose Environment
+    type: string
+    default: dev
+    values:
+      - dev
+      - qa
+      - prod
+
+  - name: terraformAction
+    displayName: Teraform Action
+    type: string
+    default: apply
+    values:
+      - plan
+      - apply
+
+pool: Aexion pool
