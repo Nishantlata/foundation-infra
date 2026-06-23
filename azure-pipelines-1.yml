@@ -24,11 +24,10 @@ parameters:
 pool:
   name: 'Aexion New Agent'
 
+# ==========================================================
+# STAGE 1 - TERRAFORM INSTALL
+# ==========================================================
 stages:
-
-# ===========================
-# Terraform Install
-# ===========================
 - stage: Terraform_install
   displayName: Terraform Install
 
@@ -50,9 +49,9 @@ stages:
               terraform version
               terraform fmt -check -recursive
 
-# ===========================
-# Init & Validate
-# ===========================
+# ==========================================================
+# STAGE 2 - INIT & VALIDATE
+# ==========================================================
 - stage: Terraform_init
   displayName: Terraform Init & Validate
   dependsOn: Terraform_install
@@ -80,9 +79,9 @@ stages:
             command: 'validate'
             workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform'
 
-# ===========================
-# TFSEC Security Scan
-# ===========================
+# ==========================================================
+# STAGE 3 - TFSEC SECURITY SCAN
+# ==========================================================
 - stage: Terraform_Security_Scan
   displayName: TFSEC Security Scan
   dependsOn: Terraform_init
@@ -93,25 +92,46 @@ stages:
 
       steps:
 
+        # ------------------------------------------
+        # Verify TFSEC Installation
+        # ------------------------------------------
         - powershell: |
             & "C:\Tools\tfsec\tfsec.exe" --version
           displayName: Verify tfsec
 
+        # ------------------------------------------
         # Generate SARIF Report
+        # ------------------------------------------
         - powershell: |
             $reportPath = "$(Build.ArtifactStagingDirectory)\tfsec-report.sarif"
 
             & "C:\Tools\tfsec\tfsec.exe" `
               "$(System.DefaultWorkingDirectory)\Terraform" `
-              --minimum-severity HIGH `
+              --minimum-severity LOW `
               --format sarif `
               --out $reportPath
 
-            Write-Host "SARIF Report Generated:"
+            Write-Host "===== REPORT GENERATED ====="
             Get-ChildItem "$(Build.ArtifactStagingDirectory)"
           displayName: Generate tfsec SARIF Report
 
-        # Show findings in Azure DevOps UI
+        # ------------------------------------------
+        # Print SARIF Report
+        # ------------------------------------------
+        - powershell: |
+            Write-Host "===== TFSEC REPORT ====="
+
+            if (Test-Path "$(Build.ArtifactStagingDirectory)\tfsec-report.sarif") {
+              Get-Content "$(Build.ArtifactStagingDirectory)\tfsec-report.sarif"
+            }
+            else {
+              Write-Host "SARIF file not found."
+            }
+          displayName: Print TFSEC Report
+
+        # ------------------------------------------
+        # Show Findings in Azure DevOps UI
+        # ------------------------------------------
         - powershell: |
             $report = "$(Build.ArtifactStagingDirectory)\tfsec-report.sarif"
 
@@ -121,51 +141,36 @@ stages:
             }
 
             $sarif = Get-Content $report -Raw | ConvertFrom-Json
-
             $count = 0
 
-            foreach ($result in $sarif.runs.results) {
+            if ($sarif.runs.Count -gt 0 -and $sarif.runs[0].results) {
 
-              $message = $result.message.text
+              foreach ($result in $sarif.runs[0].results) {
 
-              $ruleId = $result.ruleId
+                $message = $result.message.text
+                $ruleId = $result.ruleId
 
-              Write-Host "##vso[task.logissue type=warning]TFSEC [$ruleId] - $message"
+                Write-Host "##vso[task.logissue type=warning]TFSEC [$ruleId] - $message"
 
-              $count++
+                $count++
+              }
             }
 
             Write-Host "Total Findings: $count"
           displayName: Publish TFSEC Findings to UI
 
-        # Publish Artifact
-        - task: PublishBuildArtifacts@1
-          displayName: Publish tfsec Report
+        # ------------------------------------------
+        # Publish SARIF Artifact
+        # ------------------------------------------
+        - task: PublishPipelineArtifact@1
+          displayName: Publish TFSEC Report
           inputs:
-            pathToPublish: '$(Build.ArtifactStagingDirectory)'
-            artifactName: 'TFSEC-Report'
+            targetPath: '$(Build.ArtifactStagingDirectory)'
+            artifact: 'TFSEC-Report'
 
-        # Optional - Fail pipeline if findings exist
-        # Uncomment if required
-        #
-        # - powershell: |
-        #     $report = "$(Build.ArtifactStagingDirectory)\tfsec-report.sarif"
-        #
-        #     if (!(Test-Path $report)) {
-        #       exit 0
-        #     }
-        #
-        #     $sarif = Get-Content $report -Raw | ConvertFrom-Json
-        #
-        #     if ($sarif.runs.results.Count -gt 0) {
-        #         Write-Error "High severity TFSEC findings detected."
-        #         exit 1
-        #     }
-        #   displayName: Fail on TFSEC Findings
-
-# ===========================
-# Terraform Plan
-# ===========================
+# ==========================================================
+# STAGE 4 - TERRAFORM PLAN
+# ==========================================================
 - stage: Terraform_plan
   displayName: Terraform Plan
   dependsOn: Terraform_Security_Scan
@@ -195,13 +200,13 @@ stages:
             commandOptions: '-out=tfplan -var-file="$(System.DefaultWorkingDirectory)\Terraform\environment\${{ parameters.environment }}\terraform.tfvars"'
             environmentServiceNameAzureRM: 'Aexion service connection'
 
-# ===========================
-# Terraform Apply
-# ===========================
+# ==========================================================
+# STAGE 5 - TERRAFORM APPLY
+# ==========================================================
 - stage: Terraform_apply
   displayName: Terraform Apply
   dependsOn: Terraform_plan
-  condition: and(succeeded(), eq('${{ parameters.terraformAction }}','apply'))
+  condition: and(succeeded(), eq('${{ parameters.terraformAction }}', 'apply'))
 
   jobs:
     - job: Terraform_Apply
