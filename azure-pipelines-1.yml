@@ -21,93 +21,158 @@ parameters:
       - plan
       - apply
 
-pool: Aexion New Agent
+pool:
+  name: 'Aexion New Agent'
 
 stages:
-  - stage: Terraform_install
-    jobs:
-      - job: Terraform
-        steps:
-          - task: TerraformInstaller@1
-            inputs:
-              terraformVersion: 'latest'
 
-          - task: PowerShell@2
-            inputs:
-              targetType: 'inline'
-              script: |
-                terraform version
-                terraform fmt -check -recursive
+# ===========================
+# Terraform Install
+# ===========================
+- stage: Terraform_install
+  displayName: Terraform Install
 
-  - stage: Terraform_init
-    displayName: init & validate
-    jobs:
-      - job: Terraform_Initialization
-        steps:
-          - task: TerraformTask@5
-            inputs:
-              provider: 'azurerm'
-              command: 'init'
-              workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform'
-              backendServiceArm: 'Aexion service connection'
-              backendAzureRmStorageAccountName: 'axionstgbackend'
-              backendAzureRmContainerName: 'axioncontainer'
-              backendAzureRmKey: 'axion.tfstate'
+  jobs:
+    - job: Terraform_Install
+      displayName: Install Terraform
 
-          - task: TerraformTask@5
-            inputs:
-              provider: 'azurerm'
-              command: 'validate'
-              workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform'
+      steps:
+        - task: TerraformInstaller@1
+          displayName: Install Terraform
+          inputs:
+            terraformVersion: 'latest'
 
-  - stage: Terraform_Security_Scan
-    displayName: TFSEC Security Scan
-    dependsOn: Terraform_init
+        - task: PowerShell@2
+          displayName: Terraform Version & Format Check
+          inputs:
+            targetType: inline
+            script: |
+              terraform version
+              terraform fmt -check -recursive
 
-    jobs:
-      - job: TFSEC
-        displayName: Run TFSEC Scan
+# ===========================
+# Init & Validate
+# ===========================
+- stage: Terraform_init
+  displayName: Terraform Init & Validate
+  dependsOn: Terraform_install
 
-        steps:
-          - powershell: |
-              & "C:\Tools\tfsec\tfsec.exe" --version
-            displayName: Verify tfsec
+  jobs:
+    - job: Terraform_Initialization
+      displayName: Terraform Initialization
 
-          - powershell: |
-              & "C:\Tools\tfsec\tfsec.exe" `
-                "$(System.DefaultWorkingDirectory)\Terraform" `
-                --minimum-severity HIGH `
-                --format sarif `
-                --out "$(Build.ArtifactStagingDirectory)\tfsec-report"
-            displayName: Generate tfsec Report
+      steps:
+        - task: TerraformTask@5
+          displayName: Terraform Init
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform'
+            backendServiceArm: 'Aexion service connection'
+            backendAzureRmStorageAccountName: 'axionstgbackend'
+            backendAzureRmContainerName: 'axioncontainer'
+            backendAzureRmKey: 'axion.tfstate'
 
-          - task: PublishBuildArtifacts@1
-            displayName: Publish tfsec Report
-            inputs:
-              pathToPublish: '$(Build.ArtifactStagingDirectory)\tfsec-report'
-              artifactName: 'TFSEC-Report'
+        - task: TerraformTask@5
+          displayName: Terraform Validate
+          inputs:
+            provider: 'azurerm'
+            command: 'validate'
+            workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform'
 
-  - stage: Terraform_plan
-    displayName: plan
-    dependsOn: Terraform_Security_Scan
+# ===========================
+# TFSEC Security Scan
+# ===========================
+- stage: Terraform_Security_Scan
+  displayName: TFSEC Security Scan
+  dependsOn: Terraform_init
 
-    jobs:
-      - job: Terraform_plan
-        steps:
-          - task: TerraformTask@5
-            inputs:
-              provider: 'azurerm'
-              command: 'init'
-              workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform'
-              backendServiceArm: 'Aexion service connection'
-              backendAzureRmStorageAccountName: 'axionstgbackend'
-              backendAzureRmContainerName: 'axioncontainer'
-              backendAzureRmKey: 'axion.tfstate'
+  jobs:
+    - job: TFSEC
+      displayName: Run TFSEC Scan
 
-          - task: TerraformTask@5
-            inputs:
-              provider: 'azurerm'
-              command: 'plan'
-              workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform'
-              commandOptions: '-var-file="$(System.DefaultWorkingDirectory)\Terraform\environment\dev\terraform.tfvars"'
-              environmentServiceNameAzureRM: 'Aexion service connection'
+      steps:
+        - powershell: |
+            & "C:\Tools\tfsec\tfsec.exe" --version
+          displayName: Verify tfsec
+
+        - powershell: |
+            $reportPath = "$(Build.ArtifactStagingDirectory)\tfsec-report.sarif"
+
+            & "C:\Tools\tfsec\tfsec.exe" `
+              "$(System.DefaultWorkingDirectory)\Terraform" `
+              --minimum-severity HIGH `
+              --format sarif `
+              --out $reportPath
+          displayName: Generate tfsec SARIF Report
+
+        - task: PublishBuildArtifacts@1
+          displayName: Publish tfsec Report
+          inputs:
+            pathToPublish: '$(Build.ArtifactStagingDirectory)'
+            artifactName: 'TFSEC-Report'
+
+# ===========================
+# Terraform Plan
+# ===========================
+- stage: Terraform_plan
+  displayName: Terraform Plan
+  dependsOn: Terraform_Security_Scan
+
+  jobs:
+    - job: Terraform_Plan
+      displayName: Run Terraform Plan
+
+      steps:
+        - task: TerraformTask@5
+          displayName: Terraform Init for Plan
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform'
+            backendServiceArm: 'Aexion service connection'
+            backendAzureRmStorageAccountName: 'axionstgbackend'
+            backendAzureRmContainerName: 'axioncontainer'
+            backendAzureRmKey: 'axion.tfstate'
+
+        - task: TerraformTask@5
+          displayName: Terraform Plan
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform'
+            commandOptions: '-out=tfplan -var-file="$(System.DefaultWorkingDirectory)\Terraform\environment\${{ parameters.environment }}\terraform.tfvars"'
+            environmentServiceNameAzureRM: 'Aexion service connection'
+
+# ===========================
+# Terraform Apply
+# ===========================
+- stage: Terraform_apply
+  displayName: Terraform Apply
+  dependsOn: Terraform_plan
+  condition: and(succeeded(), eq('${{ parameters.terraformAction }}','apply'))
+
+  jobs:
+    - job: Terraform_Apply
+      displayName: Run Terraform Apply
+
+      steps:
+        - task: TerraformTask@5
+          displayName: Terraform Init for Apply
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform'
+            backendServiceArm: 'Aexion service connection'
+            backendAzureRmStorageAccountName: 'axionstgbackend'
+            backendAzureRmContainerName: 'axioncontainer'
+            backendAzureRmKey: 'axion.tfstate'
+
+        - task: TerraformTask@5
+          displayName: Terraform Apply
+          inputs:
+            provider: 'azurerm'
+            command: 'apply'
+            workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform'
+            commandOptions: '-auto-approve -var-file="$(System.DefaultWorkingDirectory)\Terraform\environment\${{ parameters.environment }}\terraform.tfvars"'
+            environmentServiceNameAzureRM: 'Aexion service connection'
