@@ -92,10 +92,12 @@ stages:
       displayName: Run TFSEC Scan
 
       steps:
+
         - powershell: |
             & "C:\Tools\tfsec\tfsec.exe" --version
           displayName: Verify tfsec
 
+        # Generate SARIF Report
         - powershell: |
             $reportPath = "$(Build.ArtifactStagingDirectory)\tfsec-report.sarif"
 
@@ -104,13 +106,62 @@ stages:
               --minimum-severity HIGH `
               --format sarif `
               --out $reportPath
+
+            Write-Host "SARIF Report Generated:"
+            Get-ChildItem "$(Build.ArtifactStagingDirectory)"
           displayName: Generate tfsec SARIF Report
 
+        # Show findings in Azure DevOps UI
+        - powershell: |
+            $report = "$(Build.ArtifactStagingDirectory)\tfsec-report.sarif"
+
+            if (!(Test-Path $report)) {
+              Write-Host "No tfsec report found."
+              exit 0
+            }
+
+            $sarif = Get-Content $report -Raw | ConvertFrom-Json
+
+            $count = 0
+
+            foreach ($result in $sarif.runs.results) {
+
+              $message = $result.message.text
+
+              $ruleId = $result.ruleId
+
+              Write-Host "##vso[task.logissue type=warning]TFSEC [$ruleId] - $message"
+
+              $count++
+            }
+
+            Write-Host "Total Findings: $count"
+          displayName: Publish TFSEC Findings to UI
+
+        # Publish Artifact
         - task: PublishBuildArtifacts@1
           displayName: Publish tfsec Report
           inputs:
             pathToPublish: '$(Build.ArtifactStagingDirectory)'
             artifactName: 'TFSEC-Report'
+
+        # Optional - Fail pipeline if findings exist
+        # Uncomment if required
+        #
+        # - powershell: |
+        #     $report = "$(Build.ArtifactStagingDirectory)\tfsec-report.sarif"
+        #
+        #     if (!(Test-Path $report)) {
+        #       exit 0
+        #     }
+        #
+        #     $sarif = Get-Content $report -Raw | ConvertFrom-Json
+        #
+        #     if ($sarif.runs.results.Count -gt 0) {
+        #         Write-Error "High severity TFSEC findings detected."
+        #         exit 1
+        #     }
+        #   displayName: Fail on TFSEC Findings
 
 # ===========================
 # Terraform Plan
