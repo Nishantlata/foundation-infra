@@ -41,8 +41,7 @@ stages:
           inputs:
             targetType: 'inline'
             script: |
-              # Write your PowerShell commands here.
-              
-              Write-Host "Hello World"
+              terraform version
+              terraform fmt -check -recursive
                       
 
