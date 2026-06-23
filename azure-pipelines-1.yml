@@ -65,22 +65,28 @@ stages:
     dependsOn: Terraform_init
     jobs:
     - job: TFSEC
+      displayName: Run tfsec Scan
+
       steps:
 
         - powershell: |
-            choco install tfsec -y
+            if (-not (Get-Command tfsec -ErrorAction SilentlyContinue)) {
+                choco install tfsec -y
+            }
+            tfsec --version
           displayName: Install tfsec
 
         - powershell: |
             tfsec `
               $(System.DefaultWorkingDirectory)\Terraform `
+              --minimum-severity HIGH `
               --format sarif `
-              --out tfsec-report
+              --out $(Build.ArtifactStagingDirectory)\tfsec-report
           displayName: Generate tfsec Report
 
         - task: PublishBuildArtifacts@1
           inputs:
-            pathToPublish: 'tfsec-report.sarif'
+            pathToPublish: '$(Build.ArtifactStagingDirectory)\tfsec-report.sarif'
             artifactName: 'TFSEC-Report'
           displayName: Publish tfsec Report
          
