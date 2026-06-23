@@ -48,7 +48,7 @@ stages:
            inputs:
              provider: 'azurerm'
              command: 'init'
-             workingDirectory: '$(System.DefaultWorkingDirectory)\_work\'
+             workingDirectory: '$(System.DefaultWorkingDirectory)\_work\1\s'
              backendServiceArm: 'Aexion service connection'
              backendAzureRmStorageAccountName: 'axionstgbackend'
              backendAzureRmContainerName: 'axioncontainer'
