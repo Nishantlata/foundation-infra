@@ -118,8 +118,8 @@ variable "app_service_plans" {
 
 variable "app_services" {
   type = map(object({
-    app_service_name      = string
-    rg_name               = string
+    app_service_name     = string
+    rg_name              = string
     app_service_plan_key = string
   }))
-  }
+}
