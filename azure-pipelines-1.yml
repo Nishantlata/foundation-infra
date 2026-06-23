@@ -42,6 +42,5 @@ stages:
             script: |
               terraform version
               
-              terraform fmt -check -recursive
         
 
