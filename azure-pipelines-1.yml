@@ -83,90 +83,109 @@ stages:
 # STAGE 3 - TFSEC SECURITY SCAN
 # ==========================================================
 - stage: Terraform_Security_Scan
-  displayName: TFSEC Security Scan
+  displayName: "TFSEC Security Scan"
   dependsOn: Terraform_init
 
   jobs:
     - job: TFSEC
-      displayName: Run TFSEC Scan
+      displayName: "Run TFSEC Scan"
 
       steps:
 
-        # ------------------------------------------
-        # Verify TFSEC Installation
-        # ------------------------------------------
-        - powershell: |
-            & "C:\Tools\tfsec\tfsec.exe" --version
-          displayName: Verify tfsec
+      # ------------------------------------------
+      # Verify TFSEC Installation
+      # ------------------------------------------
+      - powershell: |
+          & "C:\Tools\tfsec\tfsec.exe" --version
+        displayName: "Verify TFSEC"
 
-        # ------------------------------------------
-        # Generate SARIF Report
-        # ------------------------------------------
-        - powershell: |
-            $reportPath = "$(Build.ArtifactStagingDirectory)\tfsec-report.sarif"
+      # ------------------------------------------
+      # Create Report Folder
+      # ------------------------------------------
+      - powershell: |
+          New-Item `
+            -Path "$(Build.ArtifactStagingDirectory)\TFSEC-Report" `
+            -ItemType Directory `
+            -Force
+        displayName: "Create Report Folder"
 
-            & "C:\Tools\tfsec\tfsec.exe" `
-              "$(System.DefaultWorkingDirectory)\Terraform" `
-              --minimum-severity LOW `
-              --format sarif `
-              --out $reportPath
+      # ------------------------------------------
+      # Generate Reports
+      # ------------------------------------------
+      - powershell: |
+          $reportFolder = "$(Build.ArtifactStagingDirectory)\TFSEC-Report"
 
-            Write-Host "===== REPORT GENERATED ====="
-            Get-ChildItem "$(Build.ArtifactStagingDirectory)"
-          displayName: Generate tfsec SARIF Report
+          # SARIF Report
+          & "C:\Tools\tfsec\tfsec.exe" `
+            "$(System.DefaultWorkingDirectory)\Terraform" `
+            --minimum-severity LOW `
+            --format sarif `
+            --out "$reportFolder\tfsec-report.sarif"
 
-        # ------------------------------------------
-        # Print SARIF Report
-        # ------------------------------------------
-        - powershell: |
-            Write-Host "===== TFSEC REPORT ====="
+          # JSON Report
+          & "C:\Tools\tfsec\tfsec.exe" `
+            "$(System.DefaultWorkingDirectory)\Terraform" `
+            --minimum-severity LOW `
+            --format json `
+            --out "$reportFolder\tfsec-report.json"
 
-            if (Test-Path "$(Build.ArtifactStagingDirectory)\tfsec-report.sarif") {
-              Get-Content "$(Build.ArtifactStagingDirectory)\tfsec-report.sarif"
-            }
-            else {
-              Write-Host "SARIF file not found."
-            }
-          displayName: Print TFSEC Report
+          # HTML Report
+          & "C:\Tools\tfsec\tfsec.exe" `
+            "$(System.DefaultWorkingDirectory)\Terraform" `
+            --minimum-severity LOW `
+            --format lovely `
+            --out "$reportFolder\tfsec-report.html"
 
-        # ------------------------------------------
-        # Show Findings in Azure DevOps UI
-        # ------------------------------------------
-        - powershell: |
-            $report = "$(Build.ArtifactStagingDirectory)\tfsec-report.sarif"
+          Write-Host "===== REPORTS GENERATED ====="
+          Get-ChildItem $reportFolder
+        displayName: "Generate TFSEC Reports"
+        continueOnError: true
 
-            if (!(Test-Path $report)) {
-              Write-Host "No tfsec report found."
-              exit 0
-            }
+      # ------------------------------------------
+      # Show Vulnerabilities in Azure DevOps UI
+      # ------------------------------------------
+      - powershell: |
+          $report = "$(Build.ArtifactStagingDirectory)\TFSEC-Report\tfsec-report.json"
 
-            $sarif = Get-Content $report -Raw | ConvertFrom-Json
-            $count = 0
+          if (Test-Path $report) {
 
-            if ($sarif.runs.Count -gt 0 -and $sarif.runs[0].results) {
+            $results = (Get-Content $report -Raw | ConvertFrom-Json).results
 
-              foreach ($result in $sarif.runs[0].results) {
+            foreach ($item in $results) {
 
-                $message = $result.message.text
-                $ruleId = $result.ruleId
+              $severity = $item.severity
+              $rule = $item.rule_id
+              $message = $item.description
 
-                Write-Host "##vso[task.logissue type=warning]TFSEC [$ruleId] - $message"
+              switch ($severity) {
 
-                $count++
+                "HIGH" {
+                  Write-Host "##vso[task.logissue type=error]TFSEC [$rule] - $message"
+                }
+
+                "CRITICAL" {
+                  Write-Host "##vso[task.logissue type=error]TFSEC [$rule] - $message"
+                }
+
+                default {
+                  Write-Host "##vso[task.logissue type=warning]TFSEC [$rule] - $message"
+                }
               }
             }
+          }
+        displayName: "Publish Findings To Azure UI"
+        continueOnError: true
 
-            Write-Host "Total Findings: $count"
-          displayName: Publish TFSEC Findings to UI
+      # ------------------------------------------
+      # Publish Reports
+      # ------------------------------------------
+      - task: PublishPipelineArtifact@1
+        displayName: "Publish TFSEC Reports"
+        inputs:
+          targetPath: '$(Build.ArtifactStagingDirectory)\TFSEC-Report'
+          artifact: 'TFSEC-Report'
 
-        # ------------------------------------------
-        # Publish SARIF Artifact
-        # ------------------------------------------
-        - task: PublishPipelineArtifact@1
-          displayName: Publish TFSEC Report
-          inputs:
-            targetPath: '$(Build.ArtifactStagingDirectory)'
-            artifact: 'TFSEC-Report'
+
 
 # ==========================================================
 # STAGE 4 - TERRAFORM PLAN
