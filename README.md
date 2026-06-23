@@ -1,4 +1,3 @@
-# Design and implement a fully automated CI/CD platform that provisions Azure infrastructure using Terraform and deploys applications to Azure App Service through Azure DevOps pipelines. The solution enables Infrastructure as Code (IaC), automated application deployment, validation testing, monitoring, and release governance across multiple environments (Dev, QA, Prod).
 
 # 🚀 Automated Azure Enterprise Landing Zone & CI/CD Platform
 
@@ -7,7 +6,7 @@
 [![Azure DevOps](https://img.shields.io/badge/CI%2FCD-Azure_DevOps-0078D7?logo=azuredevops&logoColor=white)](#)
 [![Environments](https://img.shields.io/badge/Environments-Dev_|_QA_|_Prod-brightgreen)](#)
 
-An enterprise-grade, fully automated deployment platform that provisions secure cloud infrastructure using **Terraform (Infrastructure as Code)** and orchestrates application lifecycles via **Azure DevOps Multi-Stage Pipelines**.
+An enterprise-grade, fully automated deployment platform that provisions secure cloud infrastructure using **Terraform (Infrastructure as Code)** and orchestrates application lifecycles via **Azure DevOps Multi-Stage Pipelines**. # Design and implement a fully automated CI/CD platform that provisions Azure infrastructure using Terraform and deploys applications to Azure App Service through Azure DevOps pipelines. The solution enables Infrastructure as Code (IaC), automated application deployment, validation testing, monitoring, and release governance across multiple environments (Dev, QA, Prod).
 
 ---
 
@@ -223,43 +222,6 @@ The release lifecycle advances securely across three environments:
  • Deploys to App Service      • Validates API Endpoints     • Automated Monitoring Verification
 
 ```
-
----
-
-## 📁 Repository Structure
-
-```text
-FOUNDATION-INFRA/
-├── Terraform/
-│   ├── environment/                 # Environment Specific Variables
-│   │   ├── dev/terraform.tfvars     # Dev specifications
-│   │   ├── qa/terraform.tfvars      # QA specifications
-│   │   └── prod/terraform.tfvars    # Production specifications
-│   ├── modules/                     # Reusable Infrastructure Blocks
-│   │   ├── resource_group/          # Resource group setup
-│   │   ├── nsg/                     # Network Security Group definitions
-│   │   ├── nsg_association/         # Attaching NSGs to subnets
-│   │   ├── vnet/                    # Core Virtual Network module
-│   │   ├── subnet/                  # Network partitioning
-│   │   ├── pip/                     # Inbound Public IP definitions
-│   │   ├── key_vault/               # Secret management engine
-│   │   ├── app_service_plan/        # Compute infrastructure provisioning
-│   │   ├── app_service/             # Azure App Service deployment target
-│   │   └── monitoring/              # Log Analytics & Application Insights
-│   ├── main.tf                      # Root orchestration module
-│   ├── backend.tf                   # Remote state configuration storage
-│   ├── provider.tf                  # AzureRM provider declarations
-│   └── versions.tf                  # Version pins for providers & CLI
-├── .azure-pipelines/                # Pipeline Engine Definitions
-│   ├── azure-pipelines-ci.yml       # Standard CI build pipeline
-│   └── azure-pipelines-cd.yml       # Multi-stage release governance pipeline
-├── src/                             # Core Application Source Code
-├── .gitignore                       # Git exclusion rules
-└── README.md                        # Documentation blueprint
-
-```
-
----
 
 ## ⚙️ Quick Start Local Strategy
 

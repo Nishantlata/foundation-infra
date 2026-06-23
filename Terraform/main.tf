@@ -78,7 +78,7 @@ module "nsg_association" {
   for_each = var.nsg_association
 
   subnet_id = module.subnet[each.value.subnet_id].subnet_id
-  nsg_id = module.nsg[each.value.nsg_id].nsg_id
+  nsg_id    = module.nsg[each.value.nsg_id].nsg_id
 
 }
 
@@ -103,8 +103,8 @@ module "app_service" {
 
   depends_on = [module.app_service_plan]
 
-  app_service_name      = each.value.app_service_name
-  rg_location           = local.location
-  rg_name               = each.value.rg_name
+  app_service_name    = each.value.app_service_name
+  rg_location         = local.location
+  rg_name             = each.value.rg_name
   app_service_plan_id = module.app_service_plan[each.value.app_service_plan_key].app_service_plan_id
 }
