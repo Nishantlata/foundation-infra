@@ -85,6 +85,7 @@ stages:
 - stage: Terraform_Security_Scan
   displayName: "TFSEC Security Scan"
   dependsOn: Terraform_init
+  condition: succeeded()
 
   jobs:
     - job: TFSEC
@@ -93,7 +94,7 @@ stages:
       steps:
 
       # ------------------------------------------
-      # Verify TFSEC Installation
+      # Verify TFSEC
       # ------------------------------------------
       - powershell: |
           & "C:\Tools\tfsec\tfsec.exe" --version
@@ -106,86 +107,151 @@ stages:
           New-Item `
             -Path "$(Build.ArtifactStagingDirectory)\TFSEC-Report" `
             -ItemType Directory `
-            -Force
+            -Force | Out-Null
         displayName: "Create Report Folder"
 
       # ------------------------------------------
-      # Generate Reports
+      # Generate SARIF Report
       # ------------------------------------------
       - powershell: |
-          $reportFolder = "$(Build.ArtifactStagingDirectory)\TFSEC-Report"
-
-          # SARIF Report
           & "C:\Tools\tfsec\tfsec.exe" `
             "$(System.DefaultWorkingDirectory)\Terraform" `
             --minimum-severity LOW `
             --format sarif `
-            --out "$reportFolder\tfsec-report.sarif"
+            --out "$(Build.ArtifactStagingDirectory)\TFSEC-Report\tfsec-report.sarif"
+        displayName: "Generate SARIF Report"
+        continueOnError: true
 
-          # JSON Report
+      # ------------------------------------------
+      # Generate JSON Report
+      # ------------------------------------------
+      - powershell: |
           & "C:\Tools\tfsec\tfsec.exe" `
             "$(System.DefaultWorkingDirectory)\Terraform" `
             --minimum-severity LOW `
             --format json `
-            --out "$reportFolder\tfsec-report.json"
+            --out "$(Build.ArtifactStagingDirectory)\TFSEC-Report\tfsec-report.json"
+        displayName: "Generate JSON Report"
+        continueOnError: true
 
-          # HTML Report
+      # ------------------------------------------
+      # Generate HTML Report
+      # ------------------------------------------
+      - powershell: |
           & "C:\Tools\tfsec\tfsec.exe" `
             "$(System.DefaultWorkingDirectory)\Terraform" `
             --minimum-severity LOW `
             --format lovely `
-            --out "$reportFolder\tfsec-report.html"
-
-          Write-Host "===== REPORTS GENERATED ====="
-          Get-ChildItem $reportFolder
-        displayName: "Generate TFSEC Reports"
+            --out "$(Build.ArtifactStagingDirectory)\TFSEC-Report\tfsec-report.html"
+        displayName: "Generate HTML Report"
         continueOnError: true
 
       # ------------------------------------------
-      # Show Vulnerabilities in Azure DevOps UI
+      # Publish Findings to Warnings/Errors
       # ------------------------------------------
       - powershell: |
           $report = "$(Build.ArtifactStagingDirectory)\TFSEC-Report\tfsec-report.json"
 
-          if (Test-Path $report) {
+          if (!(Test-Path $report)) {
+            Write-Host "No TFSEC report found."
+            exit 0
+          }
 
-            $results = (Get-Content $report -Raw | ConvertFrom-Json).results
+          $results = (Get-Content $report -Raw | ConvertFrom-Json).results
 
-            foreach ($item in $results) {
+          foreach ($item in $results) {
 
-              $severity = $item.severity
-              $rule = $item.rule_id
-              $message = $item.description
+            $severity = $item.severity
+            $rule = $item.rule_id
+            $description = $item.description
 
-              switch ($severity) {
+            $message = "TFSEC [$rule] - $description"
 
-                "HIGH" {
-                  Write-Host "##vso[task.logissue type=error]TFSEC [$rule] - $message"
-                }
+            switch ($severity.ToUpper()) {
 
-                "CRITICAL" {
-                  Write-Host "##vso[task.logissue type=error]TFSEC [$rule] - $message"
-                }
+              "HIGH" {
+                Write-Host "##vso[task.logissue type=error]$message"
+              }
 
-                default {
-                  Write-Host "##vso[task.logissue type=warning]TFSEC [$rule] - $message"
-                }
+              "CRITICAL" {
+                Write-Host "##vso[task.logissue type=error]$message"
+              }
+
+              default {
+                Write-Host "##vso[task.logissue type=warning]$message"
               }
             }
           }
-        displayName: "Publish Findings To Azure UI"
+
+          exit 0
+        displayName: "Publish Findings To UI"
         continueOnError: true
 
       # ------------------------------------------
-      # Publish Reports
+      # Convert JSON to JUnit XML
+      # (For Test Tab like screenshot)
+      # ------------------------------------------
+      - powershell: |
+          $jsonFile = "$(Build.ArtifactStagingDirectory)\TFSEC-Report\tfsec-report.json"
+          $xmlFile  = "$(Build.ArtifactStagingDirectory)\TFSEC-Report\tfsec-junit.xml"
+
+          if (!(Test-Path $jsonFile)) {
+            exit 0
+          }
+
+          $results = (Get-Content $jsonFile -Raw | ConvertFrom-Json).results
+
+          $xml = New-Object System.Xml.XmlDocument
+
+          $testsuite = $xml.CreateElement("testsuite")
+          $testsuite.SetAttribute("name","tfsec")
+          $testsuite.SetAttribute("tests",$results.Count)
+          $testsuite.SetAttribute("failures",$results.Count)
+
+          foreach ($item in $results) {
+
+            $testcase = $xml.CreateElement("testcase")
+            $testcase.SetAttribute("classname","tfsec")
+            $testcase.SetAttribute("name",$item.rule_id)
+
+            $failure = $xml.CreateElement("failure")
+            $failure.SetAttribute("message",$item.description)
+
+            $failure.InnerText =
+            "Severity: $($item.severity)`n" +
+            "File: $($item.location.filename)`n" +
+            "Description: $($item.description)"
+
+            $testcase.AppendChild($failure) | Out-Null
+            $testsuite.AppendChild($testcase) | Out-Null
+          }
+
+          $xml.AppendChild($testsuite) | Out-Null
+          $xml.Save($xmlFile)
+        displayName: "Create JUnit Report"
+        continueOnError: true
+
+      # ------------------------------------------
+      # Publish to Test Tab
+      # ------------------------------------------
+      - task: PublishTestResults@2
+        displayName: "Publish TFSEC Test Results"
+        inputs:
+          testResultsFormat: 'JUnit'
+          testResultsFiles: '$(Build.ArtifactStagingDirectory)\TFSEC-Report\tfsec-junit.xml'
+          testRunTitle: 'tfsec'
+          failTaskOnFailedTests: false
+        condition: always()
+
+      # ------------------------------------------
+      # Publish Artifacts
       # ------------------------------------------
       - task: PublishPipelineArtifact@1
         displayName: "Publish TFSEC Reports"
         inputs:
           targetPath: '$(Build.ArtifactStagingDirectory)\TFSEC-Report'
           artifact: 'TFSEC-Report'
-
-
+          publishLocation: 'pipeline'
 
 # ==========================================================
 # STAGE 4 - TERRAFORM PLAN
