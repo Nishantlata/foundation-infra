@@ -59,6 +59,30 @@ stages:
              provider: 'azurerm'
              command: 'validate'
              workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform'
+
+  - stage: Terraform_Security_Scan
+    displayName: TFSEC Security Scan
+    dependsOn: Terraform_init
+    jobs:
+    - job: TFSEC
+      steps:
+
+        - powershell: |
+            choco install tfsec -y
+          displayName: Install tfsec
+
+        - powershell: |
+            tfsec `
+              $(System.DefaultWorkingDirectory)\Terraform `
+              --format sarif `
+              --out tfsec-report
+          displayName: Generate tfsec Report
+
+        - task: PublishBuildArtifacts@1
+          inputs:
+            pathToPublish: 'tfsec-report.sarif'
+            artifactName: 'TFSEC-Report'
+          displayName: Publish tfsec Report
          
   - stage: Terraform_plan
     displayName: plan
