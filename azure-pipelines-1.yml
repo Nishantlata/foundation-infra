@@ -78,13 +78,13 @@ stages:
                 "$(System.DefaultWorkingDirectory)\Terraform" `
                 --minimum-severity HIGH `
                 --format sarif `
-                --out "$(Build.ArtifactStagingDirectory)\tfsec-report.sarif"
+                --out "$(Build.ArtifactStagingDirectory)\tfsec-report"
             displayName: Generate tfsec Report
 
           - task: PublishBuildArtifacts@1
             displayName: Publish tfsec Report
             inputs:
-              pathToPublish: '$(Build.ArtifactStagingDirectory)\tfsec-report.sarif'
+              pathToPublish: '$(Build.ArtifactStagingDirectory)\tfsec-report'
               artifactName: 'TFSEC-Report'
 
   - stage: Terraform_plan
