@@ -26,7 +26,7 @@ parameters:
       - plan
       - apply
 
-pool: Aexion pool
+pool: Aexion New Agent
 
 stages:
   - stage: Terraform_install
