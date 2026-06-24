@@ -330,7 +330,6 @@ stages:
 # STAGE 6 - APP DEPLOY
 # ==========================================================
 
-
 - stage: App_Deployment
   displayName: App Deployment
   dependsOn: Terraform_apply
@@ -343,6 +342,26 @@ stages:
     steps:
     - checkout: self
 
+    - powershell: |
+        Write-Host "===== VERIFYING ZIP ====="
+
+        Get-ChildItem "$(System.DefaultWorkingDirectory)" -Recurse
+
+        $zip = Get-ChildItem `
+          "$(System.DefaultWorkingDirectory)" `
+          -Recurse `
+          -Filter "*.zip" |
+          Select-Object -First 1
+
+        if (!$zip) {
+          Write-Error "No ZIP file found in repository."
+          exit 1
+        }
+
+        Write-Host "ZIP FOUND: $($zip.FullName)"
+        Write-Host "##vso[task.setvariable variable=ZIP_PATH]$($zip.FullName)"
+      displayName: 'Locate ZIP File'
+
     - task: AzureCLI@2
       displayName: 'Deploy to Azure App Service'
       inputs:
@@ -353,4 +372,5 @@ stages:
           az webapp deploy `
             --resource-group "rg-web-dev-axion" `
             --name "app-web-dev-axion" `
-            --src-path "$(System.DefaultWorkingDirectory)\Terraform\src\src.zip"
+            --src-path "$(ZIP_PATH)" `
+            --type zip
