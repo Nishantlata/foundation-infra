@@ -294,9 +294,9 @@ stages:
             commandOptions: '-out=tfplan -var-file="$(System.DefaultWorkingDirectory)\Terraform\environment\${{ parameters.environment }}\terraform.tfvars"'
             environmentServiceNameAzureRM: 'Aexion service connection'
 
-# ==========================================================
-# STAGE 5 - TERRAFORM APPLY
-# ==========================================================
+# =====================================================
+# Terraform Apply
+# =====================================================
 - stage: Terraform_apply
   displayName: Terraform Apply
   dependsOn: Terraform_plan
@@ -326,51 +326,51 @@ stages:
             workingDirectory: '$(System.DefaultWorkingDirectory)\Terraform'
             commandOptions: '-auto-approve -var-file="$(System.DefaultWorkingDirectory)\Terraform\environment\${{ parameters.environment }}\terraform.tfvars"'
             environmentServiceNameAzureRM: 'Aexion service connection'
-# ==========================================================
-# STAGE 6 - APP DEPLOY
-# ==========================================================
 
-- stage: App_Deployment
-  displayName: App Deployment
+# =====================================================
+# Deploy Application to Azure App Service
+# =====================================================
+- stage: WebApp_Deploy
+  displayName: Deploy Application
   dependsOn: Terraform_apply
   condition: succeeded()
 
   jobs:
-  - job: Deploy
-    displayName: Deploy ZIP to App Service
+    - job: Deploy_WebApp
+      displayName: Deploy ZIP Package
 
-    steps:
-    - checkout: self
+      steps:
 
-    - powershell: |
-        Write-Host "===== VERIFYING ZIP ====="
+        - powershell: |
+            Write-Host "===== VERIFY ZIP PACKAGE ====="
+            Get-ChildItem "$(System.DefaultWorkingDirectory)\Terraform\src"
+          displayName: Verify ZIP Exists
 
-        Get-ChildItem "$(System.DefaultWorkingDirectory)" -Recurse
+        - task: AzureCLI@2
+          displayName: Deploy Application to App Service
+          inputs:
+            azureSubscription: 'Aexion service connection'
+            scriptType: 'ps'
+            scriptLocation: 'inlineScript'
+            inlineScript: |
 
-        $zip = Get-ChildItem `
-          "$(System.DefaultWorkingDirectory)" `
-          -Recurse `
-          -Filter "*.zip" |
-          Select-Object -First 1
+              $resourceGroup = "rg-web-${{ parameters.environment }}-axion"
+              $appServiceName = "app-web-${{ parameters.environment }}-axion"
+              $zipPath = "$(System.DefaultWorkingDirectory)\Terraform\src\src.zip"
 
-        if (!$zip) {
-          Write-Error "No ZIP file found in repository."
-          exit 1
-        }
+              Write-Host "==================================="
+              Write-Host "Resource Group : $resourceGroup"
+              Write-Host "App Service    : $appServiceName"
+              Write-Host "ZIP Package    : $zipPath"
+              Write-Host "==================================="
 
-        Write-Host "ZIP FOUND: $($zip.FullName)"
-        Write-Host "##vso[task.setvariable variable=ZIP_PATH]$($zip.FullName)"
-      displayName: 'Locate ZIP File'
+              az webapp deploy `
+                --resource-group $resourceGroup `
+                --name $appServiceName `
+                --src-path $zipPath
 
-    - task: AzureCLI@2
-      displayName: 'Deploy to Azure App Service'
-      inputs:
-        azureSubscription: 'Aexion service connection'
-        scriptType: 'ps'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-          az webapp deploy `
-            --resource-group "rg-web-dev-axion" `
-            --name "app-web-dev-axion" `
-            --src-path "$(ZIP_PATH)" `
-            --type zip
+              if ($LASTEXITCODE -ne 0) {
+                throw "Application deployment failed."
+              }
+
+              Write-Host "Application deployed successfully."
